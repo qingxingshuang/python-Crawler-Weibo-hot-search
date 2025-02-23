@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
-url = 'https://weibo.com/ajax/side/hotSearch'
+url2='https://weibo.com/hot/search'
 headers={
 'accept':'*/*',
 'accept-encoding':'gzip, deflate, br, zstd',
@@ -21,29 +21,9 @@ headers={
 'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
 'x-requested-with':'XMLHttpRequest',
 }
-response = requests.get(url=url,headers=headers)
-#打印响应状态码
-print(response.status_code)
-json_data = response.json()
-#设置列名
-title_list = []
-order_list = []
-data_list = json_data['data']['realtime']
-search_list = []
-order=1
-for data in data_list:
-    order_list.append(order)
-    title_list.append(data['note'])
-    search_list.append(data['num'])
-    order+=1
-df = pd.DataFrame({
-"热搜排名":order_list,
-"热搜标题":title_list,
-"实时搜索量":search_list,
-})
-df.to_csv("知乎热搜.csv",index=False, encoding='utf_8_sig')
-print("爬取结束!")
-
-
-
-
+r2=requests.get('https://weibo.com/hot/search',headers = headers)
+html = r2.text
+soup = BeautifulSoup(html,"html.parser")
+search_list=soup.findAll("div",attrs={"class":"HotTopic_num_1H-j8"})
+for search in search_list:
+    print(search)
